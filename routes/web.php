@@ -6,6 +6,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('api/stock/ticker/{ticker:[A-Z]+}', ['uses' => 'StocksController@getStockByTicker']);
+$router->post('api/stock', ['uses' => 'StocksController@addStock']);
 
 //ToDo: Delete
 $router->get('api/ticker/{ticker:[A-Z]+}', ['uses' => 'TinkoffController@getInfoByTicker']);

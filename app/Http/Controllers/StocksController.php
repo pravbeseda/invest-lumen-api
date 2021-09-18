@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StockItem;
+use Illuminate\Http\Request;
+
 class StocksController extends Controller
 {
-    public function __construct()
+    protected $stock;
+
+    public function __construct(StockItem $stock)
     {
+        $this->stock = $stock;
     }
 
     public function getStockByTicker(string $ticker)
@@ -13,7 +19,7 @@ class StocksController extends Controller
         $tinkoffController = new TinkoffController();
 
         $res = json_decode($tinkoffController->getInfoByTicker($ticker));
-        $info = [];
+        $info = null;
 
         if ($res && $res->payload && $res->payload->instruments && $res->payload->instruments[0]) {
             $instrument = $res->payload->instruments[0];
@@ -32,6 +38,30 @@ class StocksController extends Controller
         }
 
         return json_encode($info);
-        // return json_encode($res);
+    }
+
+    public function addStock(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|string',
+            'ticker' => 'required|string',
+            'lastPrice' => 'required|numeric',
+            'currency' => 'required|string',
+            'figi' => 'required|string',
+            'isin' => 'required|string',
+            'type' => 'required|string',
+           ]);
+
+        $stock = $this->stock->create([
+            'name' => $request->input('name'),
+            'ticker' => $request->input('ticker'),
+            'lastPrice' => $request->input('lastPrice'),
+            'currency' => $request->input('currency'),
+            'figi' => $request->input('figi'),
+            'isin' => $request->input('isin'),
+            'type' => $request->input('type'),
+        ]);
+
+        return 'OK';
     }
 }
