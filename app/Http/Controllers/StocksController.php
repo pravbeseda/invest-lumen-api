@@ -62,6 +62,20 @@ class StocksController extends Controller
             'type' => $request->input('type'),
         ]);
 
-        return 'OK';
+        return json_encode('OK');
+    }
+
+    public function filterStocks(Request $request)
+    {
+        $stocks = $this->stock
+            ->orderBy('ticker')
+            ->take(10)
+            ->get();
+        $totalCount = $this->stock->count();
+
+        return json_encode([
+            'content' => $stocks,
+            'totalCount' => $totalCount,
+        ]);
     }
 }
