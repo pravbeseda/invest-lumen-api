@@ -14,6 +14,16 @@ class StocksController extends Controller
         $this->stock = $stock;
     }
 
+    public function getStock(int $id)
+    {
+        $stocks = $this->stock
+            ->where('id', '=', $id)
+            ->take(1)
+            ->get();
+
+        return json_encode($stocks[0]);
+    }
+
     public function getStockByTicker(string $ticker)
     {
         $tinkoffController = new TinkoffController();
@@ -40,7 +50,7 @@ class StocksController extends Controller
         return json_encode($info);
     }
 
-    public function addStock(Request $request)
+    private function validateStock(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|string',
@@ -51,7 +61,11 @@ class StocksController extends Controller
             'isin' => 'required|string',
             'type' => 'required|string',
            ]);
+    }
 
+    public function addStock(Request $request)
+    {
+        $this->validateStock($request);
         $stock = $this->stock->create([
             'name' => $request->input('name'),
             'ticker' => $request->input('ticker'),
@@ -61,6 +75,24 @@ class StocksController extends Controller
             'isin' => $request->input('isin'),
             'type' => $request->input('type'),
         ]);
+
+        return json_encode('OK');
+    }
+
+    public function updateStock(int $id, Request $request)
+    {
+        $this->validateStock($request);
+        $stock = $this->stock
+            ->where('id', $id)
+            ->update([
+                'name' => $request->input('name'),
+                'ticker' => $request->input('ticker'),
+                'lastPrice' => $request->input('lastPrice'),
+                'currency' => $request->input('currency'),
+                'figi' => $request->input('figi'),
+                'isin' => $request->input('isin'),
+                'type' => $request->input('type'),
+            ]);
 
         return json_encode('OK');
     }

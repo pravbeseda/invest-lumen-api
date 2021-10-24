@@ -5,9 +5,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('api/stock/ticker/{ticker:[A-Z]+}', ['uses' => 'StocksController@getStockByTicker']);
-$router->post('api/stock', ['uses' => 'StocksController@addStock']);
+$router->get('api/stock/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
+$router->get('api/stock/ticker/{ticker:[A-Z0-9]+}', ['uses' => 'StocksController@getStockByTicker']);
 $router->get('api/stocks', ['uses' => 'StocksController@filterStocks']);
+$router->post('api/stock', ['uses' => 'StocksController@addStock']);
+$router->put('api/stock/{id:[0-9]+}', ['uses' => 'StocksController@updateStock']);
 
 //ToDo: Delete
 $router->get('api/ticker/{ticker:[A-Z]+}', ['uses' => 'TinkoffController@getInfoByTicker']);
