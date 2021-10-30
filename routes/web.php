@@ -6,7 +6,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('api/stock/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
-$router->get('api/stock/ticker/{ticker:[A-Z0-9]+}', ['uses' => 'StocksController@getStockByTicker']);
+$router->get('api/stock/ticker/{ticker:[A-Z0-9]+}/{driver:[A-Z]+}', ['uses' => 'StocksController@searchStock']);
 $router->get('api/stocks', ['uses' => 'StocksController@filterStocks']);
 $router->post('api/stock', ['uses' => 'StocksController@addStock']);
 $router->put('api/stock/{id:[0-9]+}', ['uses' => 'StocksController@updateStock']);

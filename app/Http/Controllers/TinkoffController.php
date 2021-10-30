@@ -8,22 +8,45 @@ class TinkoffController extends Controller
     {
     }
 
-    public function getInfoByTicker(string $ticker)
+    public function searchStock(string $ticker)
+    {
+        $info = json_decode($this->getInfoByTicker($ticker));
+        if ($info && $info->payload && $info->payload->instruments && $info->payload->instruments[0]) {
+            $instrument = $info->payload->instruments[0];
+            $orderBook = json_decode($this->getOrderBook($instrument->figi));
+            $lastPrice = ($orderBook && $orderBook->payload) ? $orderBook->payload->lastPrice : '';
+
+            return [
+                'ticker' => $instrument->ticker,
+                'name' => $instrument->name,
+                'currency' => $instrument->currency,
+                'figi' => $instrument->figi,
+                'isin' => $instrument->isin,
+                'type' => $instrument->type,
+                'lastPrice' => $lastPrice,
+                'driver' => 'TCS',
+            ];
+        } else {
+            return null;
+        }
+    }
+
+    private function getInfoByTicker(string $ticker)
     {
         return $this->get('/openapi/market/search/by-ticker', ['ticker' => $ticker]);
     }
 
-    public function getInfoByFigi(string $figi)
+    private function getInfoByFigi(string $figi)
     {
         return $this->get('/openapi/market/search/by-figi', ['figi' => $figi]);
     }
 
-    public function getOrderBook(string $figi, int $depth = 1)
+    private function getOrderBook(string $figi, int $depth = 1)
     {
         return $this->get('/openapi/market/orderbook', ['figi' => $figi, 'depth' => $depth]);
     }
 
-    public function getLastPrice(string $figi)
+    private function getLastPrice(string $figi)
     {
         $orderBook = json_decode($this->getOrderBook($figi));
 
