@@ -14,5 +14,7 @@ class StockItem extends Model
         'isin',
         'type',
         'lastPrice',
+        'driver',
+        'boardId',
     ];
 }

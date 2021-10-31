@@ -46,9 +46,11 @@ class StocksController extends Controller
             'ticker' => 'required|string',
             'lastPrice' => 'required|numeric',
             'currency' => 'required|string',
-            'figi' => 'required|string',
+            'figi' => 'string|nullable',
+            'boardId' => 'string|nullable',
             'isin' => 'required|string',
             'type' => 'required|string',
+            'driver' => 'required|string',
            ]);
     }
 
@@ -61,8 +63,10 @@ class StocksController extends Controller
             'lastPrice' => $request->input('lastPrice'),
             'currency' => $request->input('currency'),
             'figi' => $request->input('figi'),
+            'boardId' => $request->input('boardId'),
             'isin' => $request->input('isin'),
             'type' => $request->input('type'),
+            'driver' => $request->input('driver'),
         ]);
 
         return json_encode('OK');
@@ -79,8 +83,10 @@ class StocksController extends Controller
                 'lastPrice' => $request->input('lastPrice'),
                 'currency' => $request->input('currency'),
                 'figi' => $request->input('figi'),
+                'boardId' => $request->input('boardId'),
                 'isin' => $request->input('isin'),
                 'type' => $request->input('type'),
+                'driver' => $request->input('driver'),
             ]);
 
         return json_encode('OK');
