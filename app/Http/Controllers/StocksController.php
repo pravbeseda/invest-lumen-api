@@ -16,27 +16,16 @@ class StocksController extends Controller
 
     public function getStock(int $id)
     {
-        $stocks = $this->stock
-            ->where('id', '=', $id)
-            ->take(1)
-            ->get();
+        $stock = $this->getStockById($id);
 
-        return json_encode($stocks[0]);
+        return json_encode($stock);
     }
 
     public function searchStock(string $ticker, string $driver)
     {
-        if ($driver == 'TCS') {
-            $driverController = new TinkoffController();
-        } elseif ($driver == 'MCX') {
-            $driverController = new McxController();
-        } else {
-            return null;
-        }
+        $stock = $this->searchStockByTickerAndDriver($ticker, $driver);
 
-        $info = $driverController->searchStock($ticker);
-
-        return json_encode($info);
+        return json_encode($stock);
     }
 
     private function validateStock(Request $request)
@@ -104,5 +93,57 @@ class StocksController extends Controller
             'content' => $stocks,
             'totalCount' => $totalCount,
         ]);
+    }
+
+    // Обновить состояние бумаги
+    public function refreshPrice(int $id)
+    {
+        $stock = $this->getStockById($id);
+        $lastPrice = $this->getLastPrice($stock);
+        if ($lastPrice != $stock->lastPrice) {
+            $this->setPrice($stock->id, $lastPrice);
+        }
+
+        return json_encode($lastPrice);
+    }
+
+    private function setPrice(int $id, $price)
+    {
+        $this->stock
+            ->where('id', '=', $id)
+            ->update(['lastPrice' => $price]);
+    }
+
+    private function getLastPrice($stock)
+    {
+        $driverController = $this->getDriver($stock->driver);
+
+        return $driverController->getLastPrice($stock);
+    }
+
+    private function getStockById(int $id)
+    {
+        return $this->stock
+            ->where('id', '=', $id)
+            ->take(1)
+            ->get()[0];
+    }
+
+    private function getDriver(string $driverName)
+    {
+        if ($driverName == 'TCS') {
+            return new TinkoffController();
+        } elseif ($driverName == 'MCX') {
+            return new McxController();
+        } else {
+            return null;
+        }
+    }
+
+    private function searchStockByTickerAndDriver(string $ticker, string $driver)
+    {
+        $driverController = $this->getDriver($driver);
+
+        return $driverController->searchStock($ticker);
     }
 }

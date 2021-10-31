@@ -31,6 +31,13 @@ class TinkoffController extends Controller
         }
     }
 
+    public function getLastPrice($stock)
+    {
+        $orderBook = json_decode($this->getOrderBook($stock->figi));
+
+        return $orderBook->payload->lastPrice;
+    }
+
     private function getInfoByTicker(string $ticker)
     {
         return $this->get('/openapi/market/search/by-ticker', ['ticker' => $ticker]);
@@ -44,13 +51,6 @@ class TinkoffController extends Controller
     private function getOrderBook(string $figi, int $depth = 1)
     {
         return $this->get('/openapi/market/orderbook', ['figi' => $figi, 'depth' => $depth]);
-    }
-
-    private function getLastPrice(string $figi)
-    {
-        $orderBook = json_decode($this->getOrderBook($figi));
-
-        return $orderBook->payload->lastPrice;
     }
 
     private function get(string $url, $query)

@@ -13,6 +13,13 @@ class McxController extends Controller
         return $this->getInfo($ticker, $boardId);
     }
 
+    public function getLastPrice($stock)
+    {
+        $info = $this->getInfo($stock->ticker, $stock->boardId);
+
+        return $info['lastPrice'];
+    }
+
     private function getBoard(string $ticker)
     {
         $url = "https://iss.moex.com/iss/securities/$ticker.xml?iss.meta=off&iss.only=boards&boards.columns=secid,is_primary,boardid";
