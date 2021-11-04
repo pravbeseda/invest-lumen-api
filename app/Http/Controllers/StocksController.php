@@ -56,6 +56,7 @@ class StocksController extends Controller
             'isin' => $request->input('isin'),
             'type' => $request->input('type'),
             'driver' => $request->input('driver'),
+            'priceTime' => date('Y-m-d H:i:s'),
         ]);
 
         return json_encode('OK');
@@ -76,6 +77,7 @@ class StocksController extends Controller
                 'isin' => $request->input('isin'),
                 'type' => $request->input('type'),
                 'driver' => $request->input('driver'),
+                'priceTime' => date('Y-m-d H:i:s'),
             ]);
 
         return json_encode('OK');
@@ -85,7 +87,7 @@ class StocksController extends Controller
     {
         $stocks = $this->stock
             ->orderBy('ticker')
-            ->take(10)
+            ->take(50)
             ->get();
         $totalCount = $this->stock->count();
 
@@ -111,7 +113,10 @@ class StocksController extends Controller
     {
         $this->stock
             ->where('id', '=', $id)
-            ->update(['lastPrice' => $price]);
+            ->update([
+                'lastPrice' => $price,
+                'priceTime' => date('Y-m-d H:i:s'),
+            ]);
     }
 
     private function getLastPrice($stock)
