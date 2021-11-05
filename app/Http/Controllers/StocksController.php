@@ -110,12 +110,12 @@ class StocksController extends Controller
 
     public function getPriceByTicker(string $ticker)
     {
-        $this->stock
-            ->where('ticker', '=', $ticker)
+        $stock = $this->stock
+            ->where('ticker', '=', \strtoupper($ticker))
             ->take(1)
             ->get()[0];
 
-        return json_encode($this->stock->lastPrice);
+        return json_encode($stock->lastPrice);
     }
 
     private function setPrice(int $id, $price)
