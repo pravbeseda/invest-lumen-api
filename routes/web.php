@@ -5,12 +5,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('api/stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
-$router->get('api/stocks/ticker/{ticker:[A-Z0-9]+}/{driver:[A-Z]+}', ['uses' => 'StocksController@searchStock']);
-$router->get('api/stocks', ['uses' => 'StocksController@filterStocks']);
-$router->post('api/stocks', ['uses' => 'StocksController@addStock']);
-$router->put('api/stocks/{id:[0-9]+}', ['uses' => 'StocksController@updateStock']);
-$router->put('api/stocks/{id:[0-9]+}/refresh-price', ['uses' => 'StocksController@refreshPrice']);
+$router->get('stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
+$router->get('stocks/ticker/{ticker:[A-Z0-9]+}/{driver:[A-Z]+}', ['uses' => 'StocksController@searchStock']);
+$router->get('stocks', ['uses' => 'StocksController@filterStocks']);
+$router->post('stocks', ['uses' => 'StocksController@addStock']);
+$router->put('stocks/{id:[0-9]+}', ['uses' => 'StocksController@updateStock']);
+$router->put('stocks/{id:[0-9]+}/refresh-price', ['uses' => 'StocksController@refreshPrice']);
 
 //ToDo: Delete
 /*$router->get('api/ticker/{ticker:[A-Z]+}', ['uses' => 'TinkoffController@getInfoByTicker']);
