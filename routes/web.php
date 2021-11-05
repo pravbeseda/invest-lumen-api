@@ -6,11 +6,12 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
-$router->get('stocks/ticker/{ticker:[A-Z0-9]+}/{driver:[A-Z]+}', ['uses' => 'StocksController@searchStock']);
 $router->get('stocks', ['uses' => 'StocksController@filterStocks']);
 $router->post('stocks', ['uses' => 'StocksController@addStock']);
 $router->put('stocks/{id:[0-9]+}', ['uses' => 'StocksController@updateStock']);
 $router->put('stocks/{id:[0-9]+}/refresh-price', ['uses' => 'StocksController@refreshPrice']);
+$router->get('ticker/{ticker:[A-Z\@0-9]+}/{driver:[A-Z]+}', ['uses' => 'StocksController@searchStock']);
+$router->get('ticker/{ticker:[A-Z\@0-9]+}/price', ['uses' => 'StocksController@getPriceByTicker']);
 
 //ToDo: Delete
 /*$router->get('api/ticker/{ticker:[A-Z]+}', ['uses' => 'TinkoffController@getInfoByTicker']);

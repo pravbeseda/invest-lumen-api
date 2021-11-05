@@ -97,7 +97,6 @@ class StocksController extends Controller
         ]);
     }
 
-    // Обновить состояние бумаги
     public function refreshPrice(int $id)
     {
         $stock = $this->getStockById($id);
@@ -107,6 +106,16 @@ class StocksController extends Controller
         }
 
         return json_encode($lastPrice);
+    }
+
+    public function getPriceByTicker(string $ticker)
+    {
+        $this->stock
+            ->where('ticker', '=', $ticker)
+            ->take(1)
+            ->get()[0];
+
+        return json_encode($this->stock->lastPrice);
     }
 
     private function setPrice(int $id, $price)
