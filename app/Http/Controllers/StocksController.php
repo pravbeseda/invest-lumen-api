@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StockHistoryDays;
+use App\Models\StockHistoryMonths;
+use App\Models\StockHistoryYears;
 use App\Models\StockItem;
 use Illuminate\Http\Request;
 
@@ -23,7 +26,7 @@ class StocksController extends Controller
 
     public function searchStock(string $ticker, string $driver)
     {
-        $stock = $this->searchStockByTickerAndDriver($ticker, $driver);
+        $stock = $this->searchStockByTickerAndDriver(\strtoupper($ticker), $driver);
 
         return json_encode($stock);
     }
@@ -103,9 +106,34 @@ class StocksController extends Controller
         $lastPrice = $this->getLastPrice($stock);
         if ($lastPrice != $stock->lastPrice) {
             $this->setPrice($stock->id, $lastPrice);
+            StockHistoryDays::updateOrCreate([
+                'id' => $id,
+                'ticker' => $stock->ticker,
+                'price' => $lastPrice,
+                'datetime' => date('Y-m-d', time()),
+            ]);
+            StockHistoryMonths::updateOrCreate([
+                'id' => $id,
+                'ticker' => $stock->ticker,
+                'price' => $lastPrice,
+                'datetime' => date('Y-m-1', time()),
+            ]);
+            StockHistoryYears::updateOrCreate([
+                'id' => $id,
+                'ticker' => $stock->ticker,
+                'price' => $lastPrice,
+                'datetime' => date('Y-1-1', time()),
+            ]);
         }
 
         return json_encode($lastPrice);
+    }
+
+    public function getDiffByTicker(string $ticker)
+    {
+        $stat = StockHistoryDays::where('ticker', \strtoupper($ticker))->orderBy('datetime', 'desc')->take(2)->get();
+
+        return json_encode((count($stat) > 1) ? $stat[0]->price - $stat[1]->price : 0);
     }
 
     public function getPriceByTicker(string $ticker)
