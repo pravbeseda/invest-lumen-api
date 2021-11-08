@@ -108,17 +108,26 @@ class StocksController extends Controller
             $this->setPrice($stock->id, $lastPrice);
             StockHistoryDays::updateOrCreate([
                 'id' => $id,
+                'datetime' => date('Y-m-d', time()),                                
+            ], [
+                'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
                 'datetime' => date('Y-m-d', time()),
             ]);
             StockHistoryMonths::updateOrCreate([
                 'id' => $id,
+                'datetime' => date('Y-m-1', time()),
+            ], [
+                'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
                 'datetime' => date('Y-m-1', time()),
             ]);
             StockHistoryYears::updateOrCreate([
+                'id' => $id,
+                'datetime' => date('Y-1-1', time()),
+            ],[
                 'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
