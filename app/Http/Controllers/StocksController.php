@@ -104,7 +104,7 @@ class StocksController extends Controller
     {
         $stock = $this->getStockById($id);
         $lastPrice = $this->getLastPrice($stock);
-        if ($lastPrice != $stock->lastPrice) {
+        if (is_numeric($lastPrice) && $lastPrice != $stock->lastPrice) {
             $this->setPrice($stock->id, $lastPrice);
             StockHistoryDays::updateOrCreate([
                 'id' => $id,
