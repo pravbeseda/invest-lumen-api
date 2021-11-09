@@ -109,12 +109,12 @@ class StocksController extends Controller
             $time = time();
             StockHistoryDays::updateOrCreate([
                 'id' => $id,
-                'datetime' => date('Y-m-d H:00:00', $time),
+                'datetime' => date('Y-m-d 00:00:00', $time),
             ], [
                 'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
-                'datetime' => date('Y-m-d H:00:00', $time),
+                'datetime' => date('Y-m-d 00:00:00', $time),
             ]);
             StockHistoryMonths::updateOrCreate([
                 'id' => $id,
