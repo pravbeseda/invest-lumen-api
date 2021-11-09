@@ -15,9 +15,12 @@ class McxController extends Controller
 
     public function getLastPrice($stock)
     {
-        $info = $this->getInfo($stock->ticker, $stock->boardId);
+        $type = (in_array($stock->boardId, $this->shares)) ? 'shares' : 'bonds';
+        $url = "https://iss.moex.com/iss/engines/stock/markets/$type/boards/$stock->boardId/securities.xml?iss.meta=on&iss.only=marketdata&marketdata.columns=SECID,LAST";
+        $xml = simplexml_load_file($url);
+        $attr = $xml->xpath("//row[@SECID='$stock->ticker']")[0]->attributes();
 
-        return $info['lastPrice'];
+        return (string) $attr->LAST;
     }
 
     private function getBoard(string $ticker)
