@@ -106,32 +106,33 @@ class StocksController extends Controller
         $lastPrice = $this->getLastPrice($stock);
         if (is_numeric($lastPrice) && $lastPrice != $stock->lastPrice) {
             $this->setPrice($stock->id, $lastPrice);
+            $time = time();
             StockHistoryDays::updateOrCreate([
                 'id' => $id,
-                'datetime' => date('Y-m-d', time()),                                
+                'datetime' => date('Y-m-d H:00:00', $time),
             ], [
                 'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
-                'datetime' => date('Y-m-d', time()),
+                'datetime' => date('Y-m-d H:00:00', $time),
             ]);
             StockHistoryMonths::updateOrCreate([
                 'id' => $id,
-                'datetime' => date('Y-m-1', time()),
+                'datetime' => date('Y-m-1 00:00:00', $time),
             ], [
                 'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
-                'datetime' => date('Y-m-1', time()),
+                'datetime' => date('Y-m-1 00:00:00', $time),
             ]);
             StockHistoryYears::updateOrCreate([
                 'id' => $id,
-                'datetime' => date('Y-1-1', time()),
+                'datetime' => date('Y-1-1 00:00:00', $time),
             ],[
                 'id' => $id,
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
-                'datetime' => date('Y-1-1', time()),
+                'datetime' => date('Y-1-1 00:00:00', $time),
             ]);
         }
 
