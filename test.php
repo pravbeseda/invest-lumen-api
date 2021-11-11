@@ -1,8 +1,13 @@
 #!/usr/bin/php
 <?php
 
-$url = 'https://iss.moex.com/iss/securities/VTBE.xml?iss.meta=off&iss.only=boards&boards.columns=secid,is_primary,boardid';
-$xml = simplexml_load_file($url);
-$res = (string) $xml->xpath('/document/data/rows/row[@is_primary="1"]')[0]->attributes()->boardid;
+$date = new \DateTime();
 
-echo $res;
+$date->setTime(23,59,59);
+echo $date->format('Y-m-d H:i:s')."\n";
+
+$date->modify('last day of this month');
+echo $date->format('Y-m-d H:i:s')."\n";
+
+$date->modify('last day of December this year');
+echo $date->format('Y-m-d H:i:s')."\n";
