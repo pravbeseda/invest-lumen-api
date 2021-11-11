@@ -109,7 +109,7 @@ class StocksController extends Controller
             
             $date = new \DateTime();
             $date->setTime(23,59,59);
-            StockHistoryDays::updateOrCreate([
+            StockHistoryDays::updateOrInsert([
                 'id' => $id,
                 'datetime' => $date->format('Y-m-d H:i:s'),
             ], [
@@ -118,7 +118,7 @@ class StocksController extends Controller
             ]);
             
             $date->modify('last day of this month');
-            StockHistoryMonths::updateOrCreate([
+            StockHistoryMonths::updateOrInsert([
                 'id' => $id,
                 'datetime' => $date->format('Y-m-d H:i:s'),
             ], [
@@ -126,7 +126,7 @@ class StocksController extends Controller
                 'price' => $lastPrice,
             ]);
             $date->modify('last day of December this year');
-            StockHistoryYears::updateOrCreate([
+            StockHistoryYears::updateOrInsert([
                 'id' => $id,
                 'datetime' => $date->format('Y-m-d H:i:s'),
             ],[

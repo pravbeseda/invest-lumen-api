@@ -17,7 +17,7 @@ class updatePricesCommand extends Command
             $stocksController = new StocksController($stock);
             $price = json_decode($stocksController->refreshPrice($stock->id));
             echo $stock->ticker." - $price\n";
-            sleep(2);
+            sleep(1);
         }
     }
 }
