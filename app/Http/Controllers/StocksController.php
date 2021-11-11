@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\StockHistoryDays;
-use App\Models\StockHistoryMonths;
-use App\Models\StockHistoryYears;
 use App\Models\StockItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StocksController extends Controller
 {
@@ -106,33 +105,27 @@ class StocksController extends Controller
         $lastPrice = $this->getLastPrice($stock);
         if (is_numeric($lastPrice) && $lastPrice != $stock->lastPrice) {
             $this->setPrice($stock->id, $lastPrice);
-            
+
             $date = new \DateTime();
-            $date->setTime(23,59,59);
-            StockHistoryDays::updateOrInsert([
-                'id' => $id,
-                'datetime' => $date->format('Y-m-d H:i:s'),
-            ], [
-                'ticker' => $stock->ticker,
-                'price' => $lastPrice,
-            ]);
-            
+            $date->setTime(23, 59, 59);
+            DB::insert('insert into stock_history_days (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+
             $date->modify('last day of this month');
-            StockHistoryMonths::updateOrInsert([
+            DB::insert('insert into stock_history_months (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+
+            $date->modify('last day of December this year');
+            DB::insert('insert into stock_history_years (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+
+            /*StockHistoryDays::updateOrInsert([
                 'id' => $id,
                 'datetime' => $date->format('Y-m-d H:i:s'),
             ], [
                 'ticker' => $stock->ticker,
                 'price' => $lastPrice,
-            ]);
-            $date->modify('last day of December this year');
-            StockHistoryYears::updateOrInsert([
-                'id' => $id,
-                'datetime' => $date->format('Y-m-d H:i:s'),
-            ],[
-                'ticker' => $stock->ticker,
-                'price' => $lastPrice,
-            ]);
+            ]);*/
         }
 
         return json_encode($lastPrice);
