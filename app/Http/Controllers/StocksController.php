@@ -148,6 +148,12 @@ class StocksController extends Controller
         return json_encode($stock->lastPrice);
     }
 
+    public function getCurrencies() {
+        $driverController = $this->getDriver('TCS'); // Пока только Тинькофф
+
+        return json_encode($driverController->getCurrencies());
+    }
+
     private function setPrice(int $id, $price)
     {
         $this->stock
@@ -156,7 +162,7 @@ class StocksController extends Controller
                 'lastPrice' => $price,
                 'priceTime' => date('Y-m-d H:i:s'),
             ]);
-    }
+    }   
 
     private function getLastPrice($stock)
     {
