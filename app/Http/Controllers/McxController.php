@@ -13,6 +13,11 @@ class McxController extends Controller
         return $this->getInfo($ticker, $boardId);
     }
 
+    public function searchCurrency(string $name)
+    {
+        abort(500, 'Not implemented yet');
+    }
+
     public function getLastPrice($stock)
     {
         $type = (in_array($stock->boardId, $this->shares)) ? 'shares' : 'bonds';

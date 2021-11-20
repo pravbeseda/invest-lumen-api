@@ -30,6 +30,13 @@ class StocksController extends Controller
         return json_encode($stock);
     }
 
+    public function searchCurrency(string $name, string $driver)
+    {
+        $stock = $this->searchCurrencyByNameAndDriver(\strtoupper($name), $driver);
+
+        return json_encode($stock);
+    }
+
     private function validateStock(Request $request)
     {
         $this->validate($request, [
@@ -39,7 +46,7 @@ class StocksController extends Controller
             'currency' => 'required|string',
             'figi' => 'string|nullable',
             'boardId' => 'string|nullable',
-            'isin' => 'required|string',
+            'isin' => 'string|nullable',
             'type' => 'required|string',
             'driver' => 'required|string',
            ]);
@@ -206,5 +213,12 @@ class StocksController extends Controller
         $driverController = $this->getDriver($driver);
 
         return $driverController->searchStock($ticker);
+    }
+
+    private function searchCurrencyByNameAndDriver(string $name, string $driver)
+    {
+        $driverController = $this->getDriver($driver);
+
+        return $driverController->searchCurrency($name);
     }
 }
