@@ -87,7 +87,11 @@ class StocksController extends Controller
 
     public function filterStocks(Request $request)
     {
+        $stockTypes = $this->correctQuery($request, 'stockTypes');
         $stocks = $this->stock
+            ->when(is_array($stockTypes), function ($query) use ($stockTypes) {
+                return $query->whereIn('type', $stockTypes);
+            })
             ->orderBy('ticker')
             ->take(50)
             ->get();
@@ -108,16 +112,22 @@ class StocksController extends Controller
 
             $date = new \DateTime();
             $date->setTime(23, 59, 59);
-            DB::insert('insert into stock_history_days (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
-                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+            DB::insert(
+                'insert into stock_history_days (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]
+            );
 
             $date->modify('last day of this month');
-            DB::insert('insert into stock_history_months (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
-                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+            DB::insert(
+                'insert into stock_history_months (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]
+            );
 
             $date->modify('last day of December this year');
-            DB::insert('insert into stock_history_years (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
-                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]);
+            DB::insert(
+                'insert into stock_history_years (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
+                [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]
+            );
 
             /*StockHistoryDays::updateOrInsert([
                 'id' => $id,
@@ -148,7 +158,8 @@ class StocksController extends Controller
         return json_encode($stock->lastPrice);
     }
 
-    public function getCurrencies() {
+    public function getCurrencies()
+    {
         $driverController = $this->getDriver('TCS'); // Пока только Тинькофф
 
         return json_encode($driverController->getCurrencies());
@@ -162,7 +173,7 @@ class StocksController extends Controller
                 'lastPrice' => $price,
                 'priceTime' => date('Y-m-d H:i:s'),
             ]);
-    }   
+    }
 
     private function getLastPrice($stock)
     {
