@@ -5,6 +5,9 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+// $router->post('register', ['uses' => 'AuthController@userRegister']);
+$router->post('login', ['uses' => 'AuthController@userLogin']);
+
 $router->get('stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
 $router->get('stocks', ['uses' => 'StocksController@filterStocks']);
 $router->post('stocks', ['uses' => 'StocksController@addStock']);
