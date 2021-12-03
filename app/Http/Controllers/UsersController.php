@@ -23,17 +23,17 @@ class UsersController extends Controller
     public function authenticate(Request $request)
     {
         $this->validate($request, [
-       'email' => 'required',
-       'password' => 'required',
+            'email' => 'required',
+            'password' => 'required',
         ]);
         $user = User::where('email', $request->input('email'))->first();
-        if (Hash::check($request->input('password'), $user->password)) {
+        if (isset($user) && Hash::check($request->input('password'), $user->password)) {
             $apikey = base64_encode(Str::random(40));
             User::where('email', $request->input('email'))->update(['remember_token' => "$apikey"]);
 
             return response()->json(['status' => 'success', 'remember_token' => $apikey]);
         } else {
-            return response()->json(['status' => 'fail'], 401);
+            return response()->json(['status' => 'fail', 'message' => 'Пользователь не найден!'], 401);
         }
     }
 
