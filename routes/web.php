@@ -5,9 +5,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+// Авторизация
+$router->post('common/register', ['uses' => 'AuthController@register']);
+$router->post('common/login', ['uses' => 'AuthController@authenticate']);
+$router->get('current-user', ['uses' => 'AuthController@currentUser']);
+
 // Работа с пользователями
-$router->post('register', ['uses' => 'UsersController@register']);
-$router->post('login', ['uses' => 'UsersController@authenticate']);
 
 // Ресты для учета ценных бумаг
 $router->get('stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);

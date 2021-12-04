@@ -13,6 +13,7 @@ class StocksController extends Controller
 
     public function __construct(StockItem $stock)
     {
+        $this->middleware('auth:api');
         $this->stock = $stock;
     }
 
@@ -20,21 +21,21 @@ class StocksController extends Controller
     {
         $stock = $this->getStockById($id);
 
-        return json_encode($stock);
+        return response()->json($stock);
     }
 
     public function searchStock(string $ticker, string $driver)
     {
         $stock = $this->searchStockByTickerAndDriver(\strtoupper($ticker), $driver);
 
-        return json_encode($stock);
+        return response()->json($stock);
     }
 
     public function searchCurrency(string $name, string $driver)
     {
         $stock = $this->searchCurrencyByNameAndDriver(\strtoupper($name), $driver);
 
-        return json_encode($stock);
+        return response()->json($stock);
     }
 
     private function validateStock(Request $request)
@@ -68,7 +69,7 @@ class StocksController extends Controller
             'priceTime' => date('Y-m-d H:i:s'),
         ]);
 
-        return json_encode('OK');
+        return response()->json(['status' => 'success']);
     }
 
     public function updateStock(int $id, Request $request)
@@ -89,7 +90,7 @@ class StocksController extends Controller
                 'priceTime' => date('Y-m-d H:i:s'),
             ]);
 
-        return json_encode('OK');
+        return response()->json(['status' => 'success']);
     }
 
     public function filterStocks(Request $request)
@@ -104,7 +105,7 @@ class StocksController extends Controller
             ->get();
         $totalCount = $this->stock->count();
 
-        return json_encode([
+        return response()->json([
             'content' => $stocks,
             'totalCount' => $totalCount,
         ]);
@@ -135,24 +136,16 @@ class StocksController extends Controller
                 'insert into stock_history_years (id, ticker, price, datetime) values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?',
                 [$id, $stock->ticker, $lastPrice, $date->format('Y-m-d H:i:s'), $lastPrice]
             );
-
-            /*StockHistoryDays::updateOrInsert([
-                'id' => $id,
-                'datetime' => $date->format('Y-m-d H:i:s'),
-            ], [
-                'ticker' => $stock->ticker,
-                'price' => $lastPrice,
-            ]);*/
         }
 
-        return json_encode($lastPrice);
+        return response()->json($lastPrice);
     }
 
     public function getDiffByTicker(string $ticker)
     {
         $stat = StockHistoryDays::where('ticker', \strtoupper($ticker))->orderBy('datetime', 'desc')->take(2)->get();
 
-        return json_encode((count($stat) > 1) ? $stat[0]->price - $stat[1]->price : 0);
+        return response()->json((count($stat) > 1) ? $stat[0]->price - $stat[1]->price : 0);
     }
 
     public function getPriceByTicker(string $ticker)
@@ -162,14 +155,14 @@ class StocksController extends Controller
             ->take(1)
             ->get()[0];
 
-        return json_encode($stock->lastPrice);
+        return response()->json($stock->lastPrice);
     }
 
     public function getCurrencies()
     {
         $driverController = $this->getDriver('TCS'); // Пока только Тинькофф
 
-        return json_encode($driverController->getCurrencies());
+        return response()->json($driverController->getCurrencies());
     }
 
     private function setPrice(int $id, $price)
