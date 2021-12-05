@@ -46,17 +46,4 @@ class AuthController extends Controller
 
         return response()->json(['status' => 'success', 'message' => 'Пользователь создан']);
     }
-
-    public function currentUser(Request $request)
-    {
-        if ($request->header('Authorization')) {
-            $key = explode(' ', $request->header('Authorization'));
-            $user = User::where('token', $key[1])->first();
-            if (!empty($user)) {
-                return $user;
-            }
-        }
-
-        return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
-    }
 }

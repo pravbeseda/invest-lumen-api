@@ -8,9 +8,10 @@ $router->get('/', function () use ($router) {
 // Авторизация
 $router->post('common/register', ['uses' => 'AuthController@register']);
 $router->post('common/login', ['uses' => 'AuthController@authenticate']);
-$router->get('current-user', ['uses' => 'AuthController@currentUser']);
 
 // Работа с пользователями
+$router->get('user', ['uses' => 'UsersController@getUser']);
+$router->put('user', ['uses' => 'UsersController@updateUser']);
 
 // Ресты для учета ценных бумаг
 $router->get('stocks/{id:[0-9]+}', ['uses' => 'StocksController@getStock']);
