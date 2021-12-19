@@ -28,5 +28,8 @@ $router->get('ticker/{ticker:[A-Za-z\@0-9]+}/{driver:[A-Z]+}', ['uses' => 'Stock
 $router->get('ticker/{ticker:[A-Za-z\@0-9]+}/price', ['uses' => 'StocksController@getPriceByTicker']);
 $router->get('ticker/{ticker:[A-Za-z\@0-9]+}/diff', ['uses' => 'StocksController@getDiffByTicker']);
 
+// Ресты для работы с портфелями
+$router->post('portfolio', ['uses' => 'PortfolioController@addPrortfolio']);
+
 //Тестовые ресты
 $router->get('test/echo/{text:[A-Za-z0-9]+}', ['uses' => 'TestController@echo']);

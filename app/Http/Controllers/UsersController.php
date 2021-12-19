@@ -14,13 +14,9 @@ class UsersController extends Controller
 
     public function getUser(Request $request)
     {
-        $key = explode(' ', $request->header('Authorization'));
-        $user = User::where('token', $key[1])->first();
-        if (!empty($user)) {
-            return $user;
-        }
+        $user = $this->getUserByToken($request);
 
-        return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
+        return ($user != false) ? $user : response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
     }
 
     public function updateUser(Request $request)
@@ -41,5 +37,16 @@ class UsersController extends Controller
         }
 
         return response()->json(['status' => 'fail', 'message' => 'Пользователь не найден!'], 401);
+    }
+
+    public static function getUserByToken(Request $request)
+    {
+        $key = explode(' ', $request->header('Authorization'));
+        $user = User::where('token', $key[1])->first();
+        if (!empty($user)) {
+            return $user;
+        } else {
+            return false;
+        }
     }
 }
