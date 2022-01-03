@@ -8,5 +8,8 @@ class Portfolio extends Model
 {
     protected $fillable = [
         'name',
+        'userId',
+        'invested',
+        'value',
     ];
 }
