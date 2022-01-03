@@ -30,7 +30,8 @@ $router->get('ticker/{ticker:[A-Za-z\@0-9]+}/diff', ['uses' => 'StocksController
 
 // Ресты для работы с портфелями
 $router->get('portfolios', ['uses' => 'PortfolioController@getPortfolios']);
-$router->post('portfolio', ['uses' => 'PortfolioController@addPortfolio']);
+$router->get('portfolios/{id:[0-9]+}', ['uses' => 'PortfolioController@getPortfolio']);
+$router->post('portfolios', ['uses' => 'PortfolioController@addPortfolio']);
 
 //Тестовые ресты
 $router->get('test/echo/{text:[A-Za-z0-9]+}', ['uses' => 'TestController@echo']);

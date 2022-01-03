@@ -47,4 +47,17 @@ class PortfolioController extends Controller
             return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
         }
     }
+
+    public function getPortfolio(Request $request)
+    {
+        $user = UsersController::getUserByToken($request);
+        if (!empty($user)) {
+            $portfolio = \App\Models\Portfolio::where(['userId' => $user->id, 'id' => $request->id])
+                ->first();
+
+            return ($portfolio) ? response()->json($portfolio) : response()->json(['status' => 'fail', 'message' => 'Портфель не найден'], 404);
+        } else {
+            return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
+        }
+    }
 }
