@@ -11,5 +11,8 @@ class Portfolio extends Model
         'userId',
         'invested',
         'value',
+        'balanceRub',
+        'balanceUsd',
+        'balanceEur',
     ];
 }

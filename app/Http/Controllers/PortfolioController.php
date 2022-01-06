@@ -11,9 +11,21 @@ class PortfolioController extends Controller
         $this->middleware('auth:api');
     }
 
+    private function validatePortfolio(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|string',
+            'invested' => 'numeric',
+            'value' => 'numeric',
+            'balanceRub' => 'numeric|nullable',
+            'balanceUsd' => 'numeric|nullable',
+            'balanceEur' => 'numeric|nullable',
+           ]);
+    }
+
     public function addPortfolio(Request $request)
     {
-        $this->validate($request, ['name' => 'required|string']);
+        $this->validatePortfolio($request);
         $user = UsersController::getUserByToken($request);
         if (!empty($user)) {
             \App\Models\Portfolio::create([
@@ -21,6 +33,30 @@ class PortfolioController extends Controller
                 'userId' => $user->id,
                 'invested' => 0,
                 'value' => 0,
+                'balanceRub' => $request->input('balanceRub'),
+                'balanceUsd' => $request->input('balanceUsd'),
+                'balanceEur' => $request->input('balanceEur'),
+            ]);
+
+            return response()->json(['status' => 'success']);
+        } else {
+            return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
+        }
+    }
+
+    public function updatePortfolio(Request $request)
+    {
+        $this->validatePortfolio($request);
+        $user = UsersController::getUserByToken($request);
+        if (!empty($user)) {
+            \App\Models\Portfolio::where([
+                'userId' => $user->id,
+                'id' => $request->input('id'),
+            ])->update([
+                'name' => $request->input('name'),
+                'balanceRub' => $request->input('balanceRub'),
+                'balanceUsd' => $request->input('balanceUsd'),
+                'balanceEur' => $request->input('balanceEur'),
             ]);
 
             return response()->json(['status' => 'success']);
