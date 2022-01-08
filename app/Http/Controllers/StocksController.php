@@ -182,7 +182,7 @@ class StocksController extends Controller
         return $driverController->getLastPrice($stock);
     }
 
-    private function getStockById(int $id)
+    public function getStockById(int $id)
     {
         return $this->stock
             ->where('id', '=', $id)

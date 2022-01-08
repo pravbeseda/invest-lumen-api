@@ -23,7 +23,7 @@ class PortfolioController extends Controller
            ]);
     }
 
-    public function addPortfolio(Request $request)
+    public function createPortfolio(Request $request)
     {
         $this->validatePortfolio($request);
         $user = UsersController::getUserByToken($request);
