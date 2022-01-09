@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PortfolioController extends Controller
 {
@@ -95,5 +96,11 @@ class PortfolioController extends Controller
         } else {
             return response()->json(['status' => 'fail', 'message' => 'Необходима авторизация!'], 401);
         }
+    }
+
+    public static function updatePortfolioStock(int $portfolioId, int $stockId)
+    {
+        [$quantity, $cost, $costRub] = DB::table('users')->select('select SUM(quantity), SUM(cost), SUM(costRub) from deals where portfolioId = ? and stockId = ?',
+            [$portfolioId, $stockId]);
     }
 }
