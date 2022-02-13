@@ -28,7 +28,7 @@ class DealsController extends Controller
         $this->validateDeal($request);
         $user = UsersController::getUserByToken($request);
         if (!empty($user)) {
-            DB::transaction(function (Request $request, $user) {
+            DB::transaction(function () use ($request, $user) {
                 $portfolioId = $request->input('portfolioId');
                 $stockId = $request->input('stockId');
                 $cost = $request->input('cost');
@@ -49,7 +49,7 @@ class DealsController extends Controller
                     'quantity' => $request->input('quantity'),
                 ]);
 
-                \App\Http\Controllers\PortfolioController::updatePortfolioStock($portfolioId, $stockId);
+                \App\Http\Controllers\PortfolioController::updatePortfolioStock($user->id, $portfolioId, $stockId);
             });
 
             return response()->json(['status' => 'success']);

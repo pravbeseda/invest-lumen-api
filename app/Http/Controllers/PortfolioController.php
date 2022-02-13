@@ -98,9 +98,19 @@ class PortfolioController extends Controller
         }
     }
 
-    public static function updatePortfolioStock(int $portfolioId, int $stockId)
+    public static function updatePortfolioStock(int $userId, int $portfolioId, int $stockId)
     {
-        [$quantity, $cost, $costRub] = DB::table('users')->select('select SUM(quantity), SUM(cost), SUM(costRub) from deals where portfolioId = ? and stockId = ?',
-            [$portfolioId, $stockId]);
+        $portfolioStock = DB::select('select SUM(quantity) as quantity, SUM(cost) as cost, SUM(costRub) as costRub 
+                                      from deals where portfolioId = :portfolioId and stockId = :stockId',
+            [
+                'portfolioId' => $portfolioId,
+                'stockId' => $stockId,
+            ])[0];
+        DB::insert('insert into portfolio_stocks set userId=?, portfolioId=?, stockId=?, quantity=?, cost=?, costRub=? 
+                    ON DUPLICATE KEY UPDATE quantity =?, cost =?, costRub=?',
+            [
+                $userId, $portfolioId, $stockId, $portfolioStock->quantity, $portfolioStock->cost, $portfolioStock->costRub,
+                $portfolioStock->quantity, $portfolioStock->cost, $portfolioStock->costRub,
+            ]);
     }
 }

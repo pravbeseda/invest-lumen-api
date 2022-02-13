@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravel\Lumen\Routing\Controller as BaseController;
-use Log;
 
 class Controller extends BaseController
 {
@@ -30,7 +30,7 @@ class Controller extends BaseController
         return $params;
     }
 
-    public function myLog(...$values)
+    public static function myLog(...$values)
     {
         foreach ($values as $value) {
             Log::info(print_r($value, true));
